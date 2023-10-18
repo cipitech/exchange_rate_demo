@@ -17,3 +17,12 @@ server:
 
 app:
   delay-new-request-seconds: 60
+
+  third-party:
+    url: "http://api.exchangerate.host"
+    context: "live"
+    access-key: "XXXXXXXXXXXXXXXXXX"  #Add your own access key here
+    request-codes:
+      key: "access_key"
+      from: "source"
+      to: "currencies"

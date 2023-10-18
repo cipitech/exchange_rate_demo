@@ -1,9 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "app.delay-new-request-seconds",
-      "type": "java.lang.Long",
-      "description": "The seconds to wait before calling the third party exchange rate API"
-    }
-  ]
-}
