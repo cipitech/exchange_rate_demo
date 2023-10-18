@@ -23,16 +23,29 @@ public class ThirdPartyWebClient {
         this.defaultWebClient = defaultWebClient;
     }
 
-    public ThirdPartyResponseDTO callAPI(String fromCurrencyCode, List<String> toCurrencyCodes) {
+    public ThirdPartyResponseDTO callRateEndpoint(String fromCurrencyCode, List<String> toCurrencyCodes) {
 
         Optional<String> currCodesOpt = Optional.ofNullable(CollectionUtils.isEmpty(toCurrencyCodes) ? null : String.join(",", toCurrencyCodes));
 
         Mono<ThirdPartyResponseDTO> responseMono = defaultWebClient
                 .get()
-                .uri(uriBuilder -> uriBuilder.path("/" + config.getThirdParty().getContext())
+                .uri(uriBuilder -> uriBuilder.path("/" + config.getThirdParty().getRateEndpoint())
                         .queryParam(config.getThirdParty().getRequestCodes().getKey(), config.getThirdParty().getAccessKey())
-                        .queryParam(config.getThirdParty().getRequestCodes().getFrom(), fromCurrencyCode)
+                        .queryParamIfPresent(config.getThirdParty().getRequestCodes().getFrom(), Optional.ofNullable(fromCurrencyCode))
                         .queryParamIfPresent(config.getThirdParty().getRequestCodes().getTo(), currCodesOpt)
+                        .build())
+                .retrieve()
+                .bodyToMono(ThirdPartyResponseDTO.class);
+
+        return responseMono.block();
+    }
+
+    public ThirdPartyResponseDTO callCurrencyEndpoint() {
+
+        Mono<ThirdPartyResponseDTO> responseMono = defaultWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder.path("/" + config.getThirdParty().getCurrencyEndpoint())
+                        .queryParam(config.getThirdParty().getRequestCodes().getKey(), config.getThirdParty().getAccessKey())
                         .build())
                 .retrieve()
                 .bodyToMono(ThirdPartyResponseDTO.class);

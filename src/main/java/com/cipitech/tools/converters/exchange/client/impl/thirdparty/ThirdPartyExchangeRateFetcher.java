@@ -25,7 +25,7 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher {
 
     @Override
     public Double getExchangeRateBetweenCurrencies(String fromCurrencyCode, String toCurrencyCode) {
-        ThirdPartyResponseDTO response = thirdPartyWebClient.callAPI(fromCurrencyCode, List.of(toCurrencyCode));
+        ThirdPartyResponseDTO response = thirdPartyWebClient.callRateEndpoint(fromCurrencyCode, List.of(toCurrencyCode));
 
         if (response.getSuccess()) {
             Optional<Map.Entry<String, Double>> firstEntryOpt = response.getQuotes().entrySet().stream().findFirst();
@@ -42,6 +42,9 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher {
         }
         else{
             log.error("The call to the third party API was not successful");
+            if(response.getError() != null){
+                log.error("Error Code [{}]: {}", response.getError().getCode(), response.getError().getInfo());
+            }
         }
 
         return 0D;
@@ -54,16 +57,6 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher {
 
     @Override
     public List<Double> getAllExchangeRatesForCurrency(String fromCurrencyCode) {
-        return null;
-    }
-
-    @Override
-    public Double getConversionBetweenCurrencies(String fromCurrencyCode, String toCurrencyCode, Double amount) {
-        return null;
-    }
-
-    @Override
-    public List<Double> getConversionBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes, Double amount) {
         return null;
     }
 }

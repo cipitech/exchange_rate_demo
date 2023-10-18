@@ -1,5 +1,6 @@
 package com.cipitech.tools.converters.exchange.controller;
 
+import com.cipitech.tools.converters.exchange.client.api.ConversionFetcher;
 import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.config.Config;
 import org.slf4j.Logger;
@@ -12,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rate")
-public class ExchangeRateController
+@RequestMapping("/convert")
+public class ConversionController
 {
-    private static final Logger log = LoggerFactory.getLogger(ExchangeRateController.class);
+    private static final Logger log = LoggerFactory.getLogger(ConversionController.class);
 
-    private final ExchangeRateFetcher rateFetcher;
+    private final ConversionFetcher conversionFetcher;
     private final Config config;
 
-    public ExchangeRateController(ExchangeRateFetcher rateFetcher, Config config) {
-        this.rateFetcher = rateFetcher;
+    public ConversionController(ConversionFetcher conversionFetcher, Config config) {
+        this.conversionFetcher = conversionFetcher;
         this.config = config;
     }
 
@@ -31,23 +32,24 @@ public class ExchangeRateController
         return new ResponseEntity<>("pong", HttpStatus.OK);
     }
 
-    @GetMapping("/between/single/{fromCurrencyCode}/{toCurrencyCode}")
+    @GetMapping("/between/single/{fromCurrencyCode}/{toCurrencyCode}/{amount}")
     public ResponseEntity<String> getBetweenSingle(@PathVariable String fromCurrencyCode,
-                                                          @PathVariable String toCurrencyCode)
+                                                          @PathVariable String toCurrencyCode,
+                                                   @PathVariable Double amount)
     {
-        log.info("ExchangeRateController getBetweenSingle started...");
+        log.info("ConversionController getBetweenSingle started...");
 
         Double rate = null;
 
         try
         {
-            rate = rateFetcher.getExchangeRateBetweenCurrencies(fromCurrencyCode, toCurrencyCode);
+            rate = conversionFetcher.getConversionBetweenCurrencies(fromCurrencyCode, toCurrencyCode, amount);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
 
-        return new ResponseEntity<>(String.format("The exchange rate from %s to %s is: %f", fromCurrencyCode, toCurrencyCode, rate), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("%f %s = %f %s", amount, fromCurrencyCode, rate, toCurrencyCode), HttpStatus.OK);
     }
 }

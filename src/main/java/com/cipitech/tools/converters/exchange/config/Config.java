@@ -26,9 +26,13 @@ public class Config {
         this.thirdParty = thirdParty;
     }
 
+    /**
+     *
+     */
     public static class ThirdParty {
         private String url; //The base URL of the third-party API
-        private String context; //The endpoint that will provide the necessary info
+        private String rateEndpoint; //The endpoint that will provide the necessary exchange rate info
+        private String currencyEndpoint; //The endpoint that returns the full list of all the available currencies
         private String accessKey;
         private RequestCodes requestCodes;
 
@@ -40,12 +44,20 @@ public class Config {
             this.url = url;
         }
 
-        public String getContext() {
-            return context;
+        public String getRateEndpoint() {
+            return rateEndpoint;
         }
 
-        public void setContext(String context) {
-            this.context = context;
+        public void setRateEndpoint(String rateEndpoint) {
+            this.rateEndpoint = rateEndpoint;
+        }
+
+        public String getCurrencyEndpoint() {
+            return currencyEndpoint;
+        }
+
+        public void setCurrencyEndpoint(String currencyEndpoint) {
+            this.currencyEndpoint = currencyEndpoint;
         }
 
         public String getAccessKey() {
