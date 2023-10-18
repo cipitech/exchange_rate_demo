@@ -1,9 +1,10 @@
 package com.cipitech.tools.converters.exchange.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "app")
 public class Config {
 
