@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/exchange_rate
+    username: postgres
+    password: postgres

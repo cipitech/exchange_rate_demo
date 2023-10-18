@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+      poolName: HikariPoolZZZ
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+app:
+  delay-new-request-seconds: 60
