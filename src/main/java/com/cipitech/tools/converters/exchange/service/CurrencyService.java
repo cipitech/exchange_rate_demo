@@ -11,5 +11,11 @@ public interface CurrencyService extends BaseService<Currency, CurrencyRepositor
 {
 	List<String> getAllCurrencyCodes();
 
+	List<CurrencyDTO> getAllCurrencyDTOs();
+
+	List<Currency> getAllCurrencies();
+
 	int refreshCurrencies(List<CurrencyDTO> currList);
+
+	CurrencyDTO getCurrencyDTO(String code);
 }

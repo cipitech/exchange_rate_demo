@@ -29,7 +29,7 @@ public class ThirdPartyCurrencyFetcher implements CurrencyFetcher {
         ThirdPartyResponseDTO response = thirdPartyWebClient.callCurrencyEndpoint();
 
         if (response.getSuccess()) {
-            return response.getCurrencies().entrySet().stream().map(mapEntry -> new CurrencyDTO(mapEntry.getKey(), mapEntry.getValue())).collect(Collectors.toList());
+            return response.getCurrencies().entrySet().stream().map(mapEntry -> new CurrencyDTO(mapEntry.getKey(), mapEntry.getValue())).toList();
         }
         else{
             log.error("The call to the third party API was not successful");

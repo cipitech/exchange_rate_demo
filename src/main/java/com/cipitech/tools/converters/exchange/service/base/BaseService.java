@@ -14,4 +14,6 @@ public interface BaseService<T extends BaseRecord, R extends JpaRepository<T, Lo
 	List<T> saveAll(List<T> records);
 
 	void removeAll();
+
+	boolean exist();
 }

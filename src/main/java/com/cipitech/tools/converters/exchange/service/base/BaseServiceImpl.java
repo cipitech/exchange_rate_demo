@@ -34,6 +34,12 @@ public abstract class BaseServiceImpl<T extends BaseRecord, R extends JpaReposit
 		getRepository().deleteAll();
 	}
 
+	@Override
+	public boolean exist()
+	{
+		return getRepository().count() > 0;
+	}
+
 	private void updateBaseInfo(T record)
 	{
 		long timeNowInMillis = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

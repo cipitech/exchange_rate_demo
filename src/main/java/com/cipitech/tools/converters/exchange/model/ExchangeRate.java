@@ -2,12 +2,12 @@ package com.cipitech.tools.converters.exchange.model;
 
 import com.cipitech.tools.converters.exchange.model.base.BaseRecord;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = ExchangeRate.TABLE_NAME,
@@ -39,9 +39,4 @@ public class ExchangeRate extends BaseRecord
 
 	@Column(name = RATE_db)
 	private Double rate;
-
-	public ExchangeRate()
-	{
-		super();
-	}
 }

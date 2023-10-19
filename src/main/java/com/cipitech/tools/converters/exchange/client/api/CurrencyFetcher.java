@@ -4,6 +4,7 @@ import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 
 import java.util.List;
 
-public interface CurrencyFetcher {
-    List<CurrencyDTO> getAllCurrencies();
+public interface CurrencyFetcher extends AbstractFetcher
+{
+	List<CurrencyDTO> getAllCurrencies();
 }

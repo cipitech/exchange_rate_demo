@@ -2,13 +2,13 @@ package com.cipitech.tools.converters.exchange.model;
 
 import com.cipitech.tools.converters.exchange.model.base.BaseRecord;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = Currency.TABLE_NAME,
 		indexes = {
@@ -32,9 +32,4 @@ public class Currency extends BaseRecord
 
 	@Column(name = DESCRIPTION_db)
 	private String description;
-
-	public Currency()
-	{
-		super();
-	}
 }
