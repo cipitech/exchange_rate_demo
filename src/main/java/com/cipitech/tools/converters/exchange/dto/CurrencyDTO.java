@@ -1,7 +1,12 @@
 package com.cipitech.tools.converters.exchange.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class CurrencyDTO implements Serializable {
 
     private String code;
@@ -9,22 +14,6 @@ public class CurrencyDTO implements Serializable {
 
     public CurrencyDTO(String code, String description) {
         this.code = code;
-        this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 }
