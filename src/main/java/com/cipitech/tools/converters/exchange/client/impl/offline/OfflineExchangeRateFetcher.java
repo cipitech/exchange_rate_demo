@@ -2,6 +2,7 @@ package com.cipitech.tools.converters.exchange.client.impl.offline;
 
 import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.config.OfflineConfig;
+import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -22,19 +23,7 @@ public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
 	}
 
 	@Override
-	public Double getExchangeRateBetweenCurrencies(String fromCurrencyCode, String toCurrencyCode)
-	{
-		return null;
-	}
-
-	@Override
-	public List<Double> getExchangeRateBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes)
-	{
-		return null;
-	}
-
-	@Override
-	public List<Double> getAllExchangeRatesForCurrency(String fromCurrencyCode)
+	public List<ExchangeRateDTO> getExchangeRateBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes)
 	{
 		return null;
 	}

@@ -10,8 +10,8 @@ public class DateUtils
 		return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
 
-	public static long currentTimeInMillisMinusSeconds(int seconds)
+	public static long currentTimeInMillisMinusSeconds(long seconds)
 	{
-		return currentTimeInMillis() - (seconds * 1000L);
+		return currentTimeInMillis() - (seconds * 1000);
 	}
 }

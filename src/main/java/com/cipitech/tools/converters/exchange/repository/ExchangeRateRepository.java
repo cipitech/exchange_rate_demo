@@ -11,13 +11,13 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
 	ExchangeRate findFirstByFromCurrencyAndToCurrencyOrderByInsertedAtDesc(Currency fromCurrency, Currency toCurrency);
 
 	@Query("SELECT r FROM ExchangeRate r " +
-		   "WHERE r.fromCurrency = :fromCurr " +
-		   "AND r.toCurrency = :toCurr " +
+		   "WHERE UPPER(r.fromCurrency.code) = UPPER(:fromCurrCode) " +
+		   "AND UPPER(r.toCurrency.code) = UPPER(:toCurrCode) " +
 		   "AND r.insertedAt >= :timeMillis " +
 		   "ORDER BY r.insertedAt DESC " +
 		   "LIMIT 1 ")
 	ExchangeRate findFirstRateAfterTime(
-			@Param("fromCurr") Currency fromCurrency,
-			@Param("toCurr") Currency toCurrency,
+			@Param("fromCurrCode") String fromCurrencyCode,
+			@Param("toCurrCode") String toCurrencyCode,
 			@Param("timeMillis") Long timeMillis);
 }

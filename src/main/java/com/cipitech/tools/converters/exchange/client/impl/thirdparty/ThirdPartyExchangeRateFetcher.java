@@ -2,14 +2,16 @@ package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 
 import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
+import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
+import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,26 +26,32 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 	}
 
 	@Override
-	public Double getExchangeRateBetweenCurrencies(String fromCurrencyCode, String toCurrencyCode)
+	public List<ExchangeRateDTO> getExchangeRateBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes)
 	{
-		ThirdPartyResponseDTO response = thirdPartyWebClient.callRateEndpoint(fromCurrencyCode, List.of(toCurrencyCode));
+		ThirdPartyResponseDTO response = thirdPartyWebClient.callRateEndpoint(fromCurrencyCode, toCurrencyCodes);
+
+		List<ExchangeRateDTO> ratesList = new ArrayList<>();
 
 		if (response.getSuccess())
 		{
-			Optional<Map.Entry<String, Double>> firstEntryOpt = response.getQuotes().entrySet().stream().findFirst();
-			if (firstEntryOpt.isPresent())
+			if (CollectionUtils.isEmpty(toCurrencyCodes))
 			{
-				Map.Entry<String, Double> firstEntry = firstEntryOpt.get();
+				response.getQuotes().forEach((key, value) -> ratesList.add(ExchangeRateDTO.builder()
+						.fromCurrency(CurrencyDTO.builder().code(response.getSource()).build())
+						.toCurrency(CurrencyDTO.builder().code(key.replaceFirst(response.getSource(), "")).build())
+						.rate(value).build()));
+			}
+			else
+			{
+				toCurrencyCodes.forEach(toCurrencyCode ->
+				{
+					Double rateValue = response.getQuotes().get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
 
-				String toCurrencyResponse = firstEntry.getKey().replaceFirst(response.getSource(), "");
-				if (toCurrencyCode.equals(toCurrencyResponse))
-				{
-					return firstEntry.getValue();
-				}
-				else
-				{
-					log.error("Wrong currency exchange rate was returned");
-				}
+					ratesList.add(ExchangeRateDTO.builder()
+							.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
+							.toCurrency(CurrencyDTO.builder().code(toCurrencyCode.toUpperCase()).build())
+							.rate(rateValue != null ? rateValue : -1D).build());
+				});
 			}
 		}
 		else
@@ -55,18 +63,6 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 			}
 		}
 
-		return 0D;
-	}
-
-	@Override
-	public List<Double> getExchangeRateBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes)
-	{
-		return null;
-	}
-
-	@Override
-	public List<Double> getAllExchangeRatesForCurrency(String fromCurrencyCode)
-	{
-		return null;
+		return ratesList;
 	}
 }

@@ -11,14 +11,24 @@ import org.springframework.stereotype.Service;
 public class CurrencyMapper implements MappingService<Currency, CurrencyDTO>
 {
 	@Override
-	public CurrencyDTO toDTO(@NonNull Currency currency)
+	public CurrencyDTO toDTO(Currency currency)
 	{
+		if(currency == null)
+		{
+			return null;
+		}
+
 		return CurrencyDTO.builder().code(currency.getCode()).description(currency.getDescription()).build();
 	}
 
 	@Override
-	public Currency toEntity(@NonNull CurrencyDTO currencyDTO)
+	public Currency toEntity(CurrencyDTO currencyDTO)
 	{
+		if(currencyDTO == null)
+		{
+			return null;
+		}
+
 		return Currency.builder().code(currencyDTO.getCode()).description(currencyDTO.getDescription()).build();
 	}
 }

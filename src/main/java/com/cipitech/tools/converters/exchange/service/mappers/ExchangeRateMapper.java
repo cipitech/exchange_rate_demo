@@ -2,7 +2,6 @@ package com.cipitech.tools.converters.exchange.service.mappers;
 
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.model.ExchangeRate;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +17,13 @@ public class ExchangeRateMapper implements MappingService<ExchangeRate, Exchange
 	}
 
 	@Override
-	public ExchangeRateDTO toDTO(@NonNull ExchangeRate rate)
+	public ExchangeRateDTO toDTO(ExchangeRate rate)
 	{
+		if (rate == null)
+		{
+			return null;
+		}
+
 		return ExchangeRateDTO.builder()
 				.fromCurrency(currencyMapper.toDTO(rate.getFromCurrency()))
 				.toCurrency(currencyMapper.toDTO(rate.getToCurrency()))
@@ -27,8 +31,13 @@ public class ExchangeRateMapper implements MappingService<ExchangeRate, Exchange
 	}
 
 	@Override
-	public ExchangeRate toEntity(@NonNull ExchangeRateDTO rateDTO)
+	public ExchangeRate toEntity(ExchangeRateDTO rateDTO)
 	{
+		if (rateDTO == null)
+		{
+			return null;
+		}
+
 		return ExchangeRate.builder()
 				.fromCurrency(currencyMapper.toEntity(rateDTO.getFromCurrency()))
 				.toCurrency(currencyMapper.toEntity(rateDTO.getToCurrency()))
