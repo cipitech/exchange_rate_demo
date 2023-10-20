@@ -1,7 +1,9 @@
 package com.cipitech.tools.converters.exchange.controller;
 
-import com.cipitech.tools.converters.exchange.client.api.ConversionFetcher;
-import com.cipitech.tools.converters.exchange.config.Config;
+import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
+import com.cipitech.tools.converters.exchange.utils.ConversionUtils;
+import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/convert")
+@RequestMapping(Globals.Endpoints.Conversion.CONTROLLER)
 public class ConversionController extends AbstractController
 {
-	private final ConversionFetcher conversionFetcher;
+	private final ExchangeRateFetcher exchangeRateFetcher;
 
-	public ConversionController(ConversionFetcher conversionFetcher, Config config)
+	public ConversionController(ExchangeRateFetcher exchangeRateFetcher, AppConfig config)
 	{
 		super(config);
-		this.conversionFetcher = conversionFetcher;
+		this.exchangeRateFetcher = exchangeRateFetcher;
 	}
 
-	@GetMapping("/ping")
+	@GetMapping(Globals.Endpoints.PING)
 	public ResponseEntity<String> ping()
 	{
 		return pong();
@@ -34,13 +36,13 @@ public class ConversionController extends AbstractController
 												   @PathVariable String toCurrencyCode,
 												   @PathVariable Double amount)
 	{
-		log.info("ConversionController getBetweenSingle started...");
+		log.info("getBetweenSingle started...");
 
 		Double rate = null;
 
 		try
 		{
-			rate = getFetcher().getConversionBetweenCurrencies(fromCurrencyCode, toCurrencyCode, amount);
+			rate = ConversionUtils.convertAmount(amount, getFetcher().getExchangeRateBetweenCurrencies(fromCurrencyCode, toCurrencyCode));
 		}
 		catch (Exception e)
 		{
@@ -51,8 +53,8 @@ public class ConversionController extends AbstractController
 	}
 
 	@Override
-	protected ConversionFetcher getFetcher()
+	protected ExchangeRateFetcher getFetcher()
 	{
-		return conversionFetcher;
+		return exchangeRateFetcher;
 	}
 }

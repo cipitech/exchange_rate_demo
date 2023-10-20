@@ -1,7 +1,8 @@
 package com.cipitech.tools.converters.exchange.controller;
 
 import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
-import com.cipitech.tools.converters.exchange.config.Config;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
+import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/rate")
+@RequestMapping(Globals.Endpoints.ExchangeRate.CONTROLLER)
 public class ExchangeRateController extends AbstractController
 {
 	private final ExchangeRateFetcher rateFetcher;
 
-	public ExchangeRateController(ExchangeRateFetcher rateFetcher, Config config)
+	public ExchangeRateController(ExchangeRateFetcher rateFetcher, AppConfig config)
 	{
 		super(config);
 		this.rateFetcher = rateFetcher;
 	}
 
-	@GetMapping("/ping")
+	@GetMapping(Globals.Endpoints.PING)
 	public ResponseEntity<String> ping()
 	{
 		return pong();
@@ -33,7 +34,7 @@ public class ExchangeRateController extends AbstractController
 	public ResponseEntity<String> getBetweenSingle(@PathVariable String fromCurrencyCode,
 												   @PathVariable String toCurrencyCode)
 	{
-		log.info("ExchangeRateController getBetweenSingle started...");
+		log.info("getBetweenSingle started...");
 
 		Double rate = null;
 

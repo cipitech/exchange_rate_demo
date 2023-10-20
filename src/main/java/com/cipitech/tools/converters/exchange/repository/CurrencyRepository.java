@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CurrencyRepository extends JpaRepository<Currency, Long>
 {
-	Currency findByCode(String code);
+	Currency findByCodeIgnoreCase(String code);
 
 	List<Currency> findAllByDescriptionContainsIgnoreCase(String description);
 }

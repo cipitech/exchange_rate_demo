@@ -15,7 +15,7 @@ public interface CurrencyService extends BaseService<Currency, CurrencyRepositor
 
 	List<Currency> getAllCurrencies();
 
-	int refreshCurrencies(List<CurrencyDTO> currList);
+	void refreshCurrencies(List<CurrencyDTO> currList);
 
 	CurrencyDTO getCurrencyDTO(String code);
 }

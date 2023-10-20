@@ -1,0 +1,9 @@
+third-party:
+  url: "http://api.exchangerate.host"
+  rate-endpoint: "live"
+  currency-endpoint: "list"
+  access-key: "XXXXXXXXXXXXXXXXXX"  #Add your own access key here
+  request-codes:
+    key: "access_key"
+    from: "source"
+    to: "currencies"

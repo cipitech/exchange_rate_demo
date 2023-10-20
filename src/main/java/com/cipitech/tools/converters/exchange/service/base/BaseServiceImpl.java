@@ -1,10 +1,9 @@
 package com.cipitech.tools.converters.exchange.service.base;
 
 import com.cipitech.tools.converters.exchange.model.base.BaseRecord;
+import com.cipitech.tools.converters.exchange.utils.DateUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 public abstract class BaseServiceImpl<T extends BaseRecord, R extends JpaRepository<T, Long>> implements BaseService<T, R>
@@ -42,7 +41,7 @@ public abstract class BaseServiceImpl<T extends BaseRecord, R extends JpaReposit
 
 	private void updateBaseInfo(T record)
 	{
-		long timeNowInMillis = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		long timeNowInMillis = DateUtils.currentTimeInMillis();
 
 		if (record.getId() == null)
 		{

@@ -3,41 +3,44 @@ package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.cipitech.tools.converters.exchange.utils.Globals;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-@Profile("third-party")
-public class ThirdPartyCurrencyFetcher implements CurrencyFetcher {
+@Profile(Globals.Profiles.THIRD_PARTY)
+public class ThirdPartyCurrencyFetcher implements CurrencyFetcher
+{
+	private final ThirdPartyWebClient thirdPartyWebClient;
 
-    private static final Logger log = LoggerFactory.getLogger(ThirdPartyCurrencyFetcher.class);
+	public ThirdPartyCurrencyFetcher(ThirdPartyWebClient thirdPartyWebClient)
+	{
+		this.thirdPartyWebClient = thirdPartyWebClient;
+	}
 
-    private final ThirdPartyWebClient thirdPartyWebClient;
+	@Override
+	public List<CurrencyDTO> getAllCurrencies()
+	{
+		ThirdPartyResponseDTO response = thirdPartyWebClient.callCurrencyEndpoint();
 
-    public ThirdPartyCurrencyFetcher(ThirdPartyWebClient thirdPartyWebClient) {
-        this.thirdPartyWebClient = thirdPartyWebClient;
-    }
+		if (response.getSuccess())
+		{
+			return response.getCurrencies().entrySet().stream().map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
+		}
+		else
+		{
+			log.error("The call to the third party API was not successful");
+			if (response.getError() != null)
+			{
+				log.error("Error Code [{}]: {}", response.getError().getCode(), response.getError().getInfo());
+			}
+		}
 
-    @Override
-    public List<CurrencyDTO> getAllCurrencies() {
-        ThirdPartyResponseDTO response = thirdPartyWebClient.callCurrencyEndpoint();
-
-        if (response.getSuccess()) {
-            return response.getCurrencies().entrySet().stream().map(mapEntry -> new CurrencyDTO(mapEntry.getKey(), mapEntry.getValue())).toList();
-        }
-        else{
-            log.error("The call to the third party API was not successful");
-            if(response.getError() != null){
-                log.error("Error Code [{}]: {}", response.getError().getCode(), response.getError().getInfo());
-            }
-        }
-
-        return new ArrayList<>();
-    }
+		return new ArrayList<>();
+	}
 }

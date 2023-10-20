@@ -8,8 +8,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CurrencyDTO extends BaseRecordDTO
+public class ExchangeRateDTO extends BaseRecordDTO
 {
-	private String code;
-	private String description;
+	private CurrencyDTO fromCurrency;
+	private CurrencyDTO toCurrency;
+	private Double      rate;
 }

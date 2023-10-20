@@ -1,9 +1,10 @@
 package com.cipitech.tools.converters.exchange.controller;
 
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
-import com.cipitech.tools.converters.exchange.config.Config;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
+import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,27 +14,27 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/currency")
+@RequestMapping(Globals.Endpoints.Currency.CONTROLLER)
 public class CurrencyController extends AbstractController
 {
 	private final CurrencyFetcher currencyFetcher;
 	private final CurrencyService currencyService;
 
-	public CurrencyController(CurrencyFetcher currencyFetcher, Config config, CurrencyService currencyService)
+	public CurrencyController(CurrencyFetcher currencyFetcher, CurrencyService currencyService, AppConfig config)
 	{
 		super(config);
 		this.currencyFetcher = currencyFetcher;
 		this.currencyService = currencyService;
 	}
 
-	@GetMapping("/ping")
+	@GetMapping(Globals.Endpoints.PING)
 	public ResponseEntity<String> ping()
 	{
 		return pong();
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<List<?>> getAll(@RequestParam(value = "show_description", defaultValue = "false", required = false) Boolean showDescription)
+	@GetMapping(Globals.Endpoints.Currency.all)
+	public ResponseEntity<List<?>> getAll(@RequestParam(value = Globals.Parameters.Currency.showDescription, defaultValue = "false", required = false) Boolean showDescription)
 	{
 		log.info("getAll started...");
 		log.debug("showDescription [{}]", showDescription);
@@ -48,7 +49,7 @@ public class CurrencyController extends AbstractController
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/refresh")
+	@GetMapping(Globals.Endpoints.Currency.refresh)
 	public ResponseEntity<String> refreshCurrencies()
 	{
 		log.info("refreshCurrencies started...");
@@ -58,7 +59,7 @@ public class CurrencyController extends AbstractController
 		return new ResponseEntity<>("Currencies were fetched from source and added to the database.", HttpStatus.OK);
 	}
 
-	@GetMapping("/{code}")
+	@GetMapping("/{" + Globals.Parameters.Currency.code + "}")
 	public ResponseEntity<?> getByCode(@PathVariable String code)
 	{
 		log.info("getByCode started...");

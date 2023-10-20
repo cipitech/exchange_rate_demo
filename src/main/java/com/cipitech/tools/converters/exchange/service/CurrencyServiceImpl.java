@@ -4,9 +4,11 @@ import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.model.Currency;
 import com.cipitech.tools.converters.exchange.repository.CurrencyRepository;
 import com.cipitech.tools.converters.exchange.service.base.BaseServiceImpl;
+import com.cipitech.tools.converters.exchange.service.mappers.CurrencyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -18,11 +20,13 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 {
 	private final CurrencyRepository  currencyRepository;
 	private final ExchangeRateService exchangeRateService;
+	private final CurrencyMapper currencyMapper;
 
-	public CurrencyServiceImpl(CurrencyRepository currencyRepository, ExchangeRateService exchangeRateService)
+	public CurrencyServiceImpl(CurrencyRepository currencyRepository, ExchangeRateService exchangeRateService, CurrencyMapper currencyMapper)
 	{
 		this.currencyRepository = currencyRepository;
 		this.exchangeRateService = exchangeRateService;
+		this.currencyMapper = currencyMapper;
 	}
 
 	@Override
@@ -34,7 +38,7 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 	@Override
 	public List<CurrencyDTO> getAllCurrencyDTOs()
 	{
-		return getAllCurrencies().stream().map(this::toDTO).toList();
+		return getAllCurrencies().stream().map(currencyMapper::toDTO).toList();
 	}
 
 	@Override
@@ -43,29 +47,25 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 		return getRepository().findAll(Sort.by(Sort.Order.asc(Currency.CODE)));
 	}
 
+	@Transactional
 	@Override
-	public int refreshCurrencies(List<CurrencyDTO> currList)
+	public void refreshCurrencies(List<CurrencyDTO> currList)
 	{
-		removeAll();
+		this.removeAll();
 
 		if (!CollectionUtils.isEmpty(currList))
 		{
-			List<Currency> currencies = currList.stream().map(this::toEntity).toList();
-
-			saveAll(currencies);
-
-			return currencies.size();
+			saveAll(currList.stream().map(currencyMapper::toEntity).toList());
 		}
-
-		return 0;
 	}
 
 	@Override
 	public CurrencyDTO getCurrencyDTO(String code)
 	{
-		return toDTO(getRepository().findByCode(code));
+		return currencyMapper.toDTO(getRepository().findByCodeIgnoreCase(code));
 	}
 
+	@Transactional
 	@Override
 	public void removeAll()
 	{
@@ -78,25 +78,5 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 	public CurrencyRepository getRepository()
 	{
 		return currencyRepository;
-	}
-
-	private CurrencyDTO toDTO(Currency currency)
-	{
-		if (currency == null)
-		{
-			return null;
-		}
-
-		return CurrencyDTO.builder().code(currency.getCode()).description(currency.getDescription()).build();
-	}
-
-	private Currency toEntity(CurrencyDTO currencyDTO)
-	{
-		if (currencyDTO == null)
-		{
-			return null;
-		}
-
-		return Currency.builder().code(currencyDTO.getCode()).description(currencyDTO.getDescription()).build();
 	}
 }

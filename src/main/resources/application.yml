@@ -1,7 +1,11 @@
 spring:
   profiles:
-    active: dev, third-party
+    active: third-party
+
   datasource:
+    url: jdbc:postgresql://localhost:5434/exchange_rate
+    username: postgres
+    password: postgres
     hikari:
       connectionTimeout: 20000
       maximumPoolSize: 5
@@ -27,13 +31,3 @@ swagger:
 
 app:
   delay-new-request-seconds: 60
-
-  third-party:
-    url: "http://api.exchangerate.host"
-    rate-endpoint: "live"
-    currency-endpoint: "list"
-    access-key: "XXXXXXXXXXXXXXXXXX"  #Add your own access key here
-    request-codes:
-      key: "access_key"
-      from: "source"
-      to: "currencies"

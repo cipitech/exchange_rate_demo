@@ -1,7 +1,7 @@
 package com.cipitech.tools.converters.exchange.controller;
 
 import com.cipitech.tools.converters.exchange.client.api.AbstractFetcher;
-import com.cipitech.tools.converters.exchange.config.Config;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 @Getter
 public abstract class AbstractController
 {
-	private final Config config;
+	private final AppConfig config;
 
-	protected AbstractController(Config config)
+	protected AbstractController(AppConfig config)
 	{
 		this.config = config;
 	}
