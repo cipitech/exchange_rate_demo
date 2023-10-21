@@ -22,6 +22,14 @@ public class Globals
 			public static final String to    = "to";
 			public static final String delay = "delay";
 		}
+
+		public static class Conversion
+		{
+			public static final String from   = "from";
+			public static final String to     = "to";
+			public static final String delay  = "delay";
+			public static final String amount = "amount";
+		}
 	}
 
 	public static class Endpoints
@@ -39,6 +47,8 @@ public class Globals
 		public static class Conversion
 		{
 			public static final String CONTROLLER = "/convert";
+
+			public static final String value = "/value";
 		}
 
 		public static class ExchangeRate

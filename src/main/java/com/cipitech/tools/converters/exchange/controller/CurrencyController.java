@@ -49,6 +49,16 @@ public class CurrencyController extends AbstractController
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@DeleteMapping(Globals.Endpoints.Currency.all)
+	public ResponseEntity<String> deleteAll()
+	{
+		log.info("deleteAll started...");
+
+		currencyService.removeAll();
+
+		return new ResponseEntity<>("All currencies were removed from the database.", HttpStatus.OK);
+	}
+
 	@GetMapping(Globals.Endpoints.Currency.refresh)
 	public ResponseEntity<String> refreshCurrencies()
 	{

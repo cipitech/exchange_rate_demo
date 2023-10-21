@@ -13,5 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app")
 public class AppConfig
 {
-	private Long delayNewRequestSeconds; // The seconds to wait before calling the third party exchange rate API
+	private Long   delayNewRequestSeconds; // The seconds to wait before calling the third party exchange rate API
+	private String defaultFromCurrency; // The default currency code to put as the source if the used does not specify one.
 }

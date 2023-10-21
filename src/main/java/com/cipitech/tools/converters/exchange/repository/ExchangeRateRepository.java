@@ -19,5 +19,10 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
 	ExchangeRate findFirstRateAfterTime(
 			@Param("fromCurrCode") String fromCurrencyCode,
 			@Param("toCurrCode") String toCurrencyCode,
-			@Param("timeMillis") Long timeMillis);
+			@Param("timeMillis") long timeMillis);
+
+	@Query("SELECT COUNT(r.id) FROM ExchangeRate r " +
+		   "WHERE UPPER(r.fromCurrency.code) = UPPER(:fromCurrCode) " +
+		   "AND r.insertedAt >= :timeMillis ")
+	Long countByFromCurrencyAfterTime(@Param("fromCurrCode") String fromCurrencyCode, @Param("timeMillis") long timeMillis);
 }

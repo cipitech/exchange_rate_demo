@@ -7,5 +7,7 @@ public interface MappingService<T extends BaseRecord, R extends BaseRecordDTO>
 {
 	R toDTO(T entity);
 
+	R toBaseDTO(T entity);
+
 	T toEntity(R dto);
 }

@@ -2,7 +2,6 @@ package com.cipitech.tools.converters.exchange.service.mappers;
 
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.model.Currency;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,7 @@ public class CurrencyMapper implements MappingService<Currency, CurrencyDTO>
 	@Override
 	public CurrencyDTO toDTO(Currency currency)
 	{
-		if(currency == null)
+		if (currency == null)
 		{
 			return null;
 		}
@@ -22,13 +21,32 @@ public class CurrencyMapper implements MappingService<Currency, CurrencyDTO>
 	}
 
 	@Override
-	public Currency toEntity(CurrencyDTO currencyDTO)
+	public CurrencyDTO toBaseDTO(Currency currency)
 	{
-		if(currencyDTO == null)
+		if (currency == null)
 		{
 			return null;
 		}
 
-		return Currency.builder().code(currencyDTO.getCode()).description(currencyDTO.getDescription()).build();
+		CurrencyDTO currencyDTO = toDTO(currency);
+		currencyDTO.setId(currency.getId());
+		currencyDTO.setInsertedAt(currency.getInsertedAt());
+		currencyDTO.setUpdatedAt(currency.getUpdatedAt());
+
+		return currencyDTO;
+	}
+
+	@Override
+	public Currency toEntity(CurrencyDTO currencyDTO)
+	{
+		if (currencyDTO == null)
+		{
+			return null;
+		}
+
+		Currency currency = Currency.builder().code(currencyDTO.getCode()).description(currencyDTO.getDescription()).build();
+		currency.setId(currencyDTO.getId());
+
+		return currency;
 	}
 }

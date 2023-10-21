@@ -3,6 +3,7 @@ package com.cipitech.tools.converters.exchange.dto;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,6 +14,6 @@ public class ConversionRateDTO implements Serializable
 {
 	private ExchangeRateDTO exchangeRate;
 	private Double          fromAmount;
-	private Double          toAmount;
+	private BigDecimal      toAmount;
 	private String          description;
 }

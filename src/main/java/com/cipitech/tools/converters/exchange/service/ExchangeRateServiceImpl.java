@@ -7,6 +7,9 @@ import com.cipitech.tools.converters.exchange.service.base.BaseServiceImpl;
 import com.cipitech.tools.converters.exchange.service.mappers.ExchangeRateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,8 +31,23 @@ public class ExchangeRateServiceImpl extends BaseServiceImpl<ExchangeRate, Excha
 	}
 
 	@Override
-	public ExchangeRateDTO findFirstRateDTOAfterTime(String fromCurrencyCode, String toCurrencyCode, Long timeMillis)
+	public ExchangeRateDTO findFirstRateDTOAfterTime(String fromCurrencyCode, String toCurrencyCode, long timeMillis)
 	{
 		return exchangeRateMapper.toDTO(getRepository().findFirstRateAfterTime(fromCurrencyCode, toCurrencyCode, timeMillis));
+	}
+
+	@Override
+	public boolean existForCurrencyAfterTime(String fromCurrencyCode, long timeMillis)
+	{
+		return getRepository().countByFromCurrencyAfterTime(fromCurrencyCode, timeMillis) > 0;
+	}
+
+	@Override
+	public void addNewRates(List<ExchangeRateDTO> rateList)
+	{
+		if (!CollectionUtils.isEmpty(rateList))
+		{
+			saveAll(rateList.stream().map(exchangeRateMapper::toEntity).toList());
+		}
 	}
 }
