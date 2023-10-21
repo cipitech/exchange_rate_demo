@@ -7,8 +7,10 @@ import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.service.ExchangeRateService;
 import com.cipitech.tools.converters.exchange.utils.Globals;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(Globals.Endpoints.ExchangeRate.CONTROLLER)
+@RequestMapping(value = Globals.Endpoints.ExchangeRate.CONTROLLER, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Exchange Rates API")
 public class ExchangeRateController extends AbstractRateController
 {
 	protected ExchangeRateController(AppConfig config, ExchangeRateFetcher rateFetcher, CurrencyFetcher currencyFetcher, ExchangeRateService exchangeRateService, CurrencyService currencyService)

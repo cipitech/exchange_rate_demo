@@ -10,7 +10,6 @@ import java.util.Map;
 @Setter
 public class ThirdPartyResponseDTO implements Serializable
 {
-
 	private Map<String, String> currencies;
 	private Map<String, Double> quotes;
 	private String              source;

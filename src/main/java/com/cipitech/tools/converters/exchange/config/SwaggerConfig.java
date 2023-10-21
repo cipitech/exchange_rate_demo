@@ -70,18 +70,10 @@ public class SwaggerConfig
 
 	private Contact contactInfo()
 	{
-		Contact contact = new Contact().name(getContact().getName());
-
-		if (getContact().getWebsite() != null)
-		{
-			contact.url(getContact().getWebsite());
-		}
-		else
-		{
-			contact.email(getContact().getEmail());
-		}
-
-		return contact;
+		return new Contact()
+				.name(getContact().getName())
+				.url(getContact().getWebsite())
+				.email(getContact().getEmail());
 	}
 
 	@Primary
