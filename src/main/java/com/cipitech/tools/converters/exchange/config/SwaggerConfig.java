@@ -1,5 +1,6 @@
 package com.cipitech.tools.converters.exchange.config;
 
+import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -44,6 +45,7 @@ public class SwaggerConfig
 	{
 		return new OpenAPI()
 				.info(apiInfo())
+				.externalDocs(externalDocs())
 				.servers(servers());
 	}
 
@@ -71,9 +73,13 @@ public class SwaggerConfig
 	private Contact contactInfo()
 	{
 		return new Contact()
-				.name(getContact().getName())
-				.url(getContact().getWebsite())
+				.name("the developer")
 				.email(getContact().getEmail());
+	}
+
+	private ExternalDocumentation externalDocs()
+	{
+		return new ExternalDocumentation().description(getContact().getName()).url(getContact().getWebsite());
 	}
 
 	@Primary

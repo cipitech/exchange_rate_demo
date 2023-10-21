@@ -25,7 +25,7 @@ swagger:
   description: "Documentation for the Exchange Rate demo application."
   contact:
     name: "Cipitech Ltd."
-    email: "cipitech.com@gmail.com"
+    email: "haris.tsipis@gmail.com"
     website: "www.cipitech.com"
   displayRequestDuration: true
 

@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = Globals.Endpoints.Currency.CONTROLLER, produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "Currency API")
+@Tag(name = "Currency API", description = "Everything about currencies")
 public class CurrencyController extends AbstractController
 {
 	private final CurrencyFetcher currencyFetcher;
@@ -61,18 +60,18 @@ public class CurrencyController extends AbstractController
 
 		List<?> result = showDescription ? currencyService.getAllCurrencyDTOs() : currencyService.getAllCurrencyCodes();
 
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		return ResponseEntity.ok(result);
 	}
 
 	@DeleteMapping(Globals.Endpoints.Currency.all)
-	@Operation(summary = "Delete all the currencies that exist in the system. Exchange Rate records will be deleted as well.")
+	@Operation(summary = "Delete all the currencies that exist in the system.", description = "Note: Exchange Rate records will be deleted as well.")
 	public ResponseEntity<SuccessResponseDTO> deleteAll()
 	{
 		log.info("deleteAll started...");
 
 		currencyService.removeAll();
 
-		return new ResponseEntity<>(SuccessResponseDTO.builder().message("All currencies were removed from the database.").build(), HttpStatus.OK);
+		return ResponseEntity.ok(SuccessResponseDTO.builder().message("All currencies were removed from the database.").build());
 	}
 
 	@GetMapping(Globals.Endpoints.Currency.refresh)
@@ -83,7 +82,7 @@ public class CurrencyController extends AbstractController
 
 		refresh();
 
-		return new ResponseEntity<>(SuccessResponseDTO.builder().message("Currencies were fetched from source and added to the database.").build(), HttpStatus.OK);
+		return ResponseEntity.ok(SuccessResponseDTO.builder().message("Currencies were fetched from source and added to the database.").build());
 	}
 
 	@GetMapping("/{" + Globals.Parameters.Currency.code + "}")
@@ -102,10 +101,15 @@ public class CurrencyController extends AbstractController
 		log.info("getByCode started...");
 		log.debug("code [{}]", code);
 
+		if (!currencyService.exist())
+		{
+			refresh();
+		}
+
 		CurrencyDTO currencyDTO = currencyService.getCurrencyDTO(code);
 		if (currencyDTO != null)
 		{
-			return new ResponseEntity<>(currencyDTO, HttpStatus.OK);
+			return ResponseEntity.ok(currencyDTO);
 		}
 
 		throw new RecordNotFoundException(String.format("The currency with code %s was not found. Please try something else.", code));

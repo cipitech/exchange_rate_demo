@@ -5,36 +5,40 @@ import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundExc
 import com.cipitech.tools.converters.exchange.error.exceptions.ServerErrorException;
 import com.cipitech.tools.converters.exchange.error.exceptions.WrongParametersException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 {
 	@ExceptionHandler(RecordNotFoundException.class)
-	public final ResponseEntity<ErrorResponseDTO> handleRecordNotFoundException(RecordNotFoundException ex)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public final ErrorResponseDTO handleRecordNotFoundException(RecordNotFoundException ex)
 	{
-		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+		return getErrorDTO(ex, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(WrongParametersException.class)
-	public final ResponseEntity<ErrorResponseDTO> handleWrongParametersException(WrongParametersException ex)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public final ErrorResponseDTO handleWrongParametersException(WrongParametersException ex)
 	{
-		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+		return getErrorDTO(ex, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(ServerErrorException.class)
-	public final ResponseEntity<ErrorResponseDTO> handleWrongParametersException(ServerErrorException ex)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public final ErrorResponseDTO handleWrongParametersException(ServerErrorException ex)
 	{
-		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		return getErrorDTO(ex, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(Exception.class)
-	public final ResponseEntity<ErrorResponseDTO> handleOtherException(Exception ex)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public final ErrorResponseDTO handleOtherException(Exception ex)
 	{
-		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		return getErrorDTO(ex, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	private ErrorResponseDTO getErrorDTO(Exception ex, HttpStatus status)

@@ -3,12 +3,12 @@ package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
+import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,13 +34,16 @@ public class ThirdPartyCurrencyFetcher implements CurrencyFetcher
 		}
 		else
 		{
-			log.error("The call to the third party API was not successful");
+			StringBuffer sb = new StringBuffer();
+
+			sb.append("The call to the third party API was not successful. ");
 			if (response.getError() != null)
 			{
-				log.error("Error Code [{}]: {}", response.getError().getCode(), response.getError().getInfo());
+				sb.append(String.format("Error Code [%s]: %s", response.getError().getCode(), response.getError().getInfo()));
 			}
-		}
 
-		return new ArrayList<>();
+			log.error(sb.toString());
+			throw new RecordNotFoundException(sb.toString());
+		}
 	}
 }
