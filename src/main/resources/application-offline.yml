@@ -1,1 +1,5 @@
 offline:
+  data-path: "F:/Workspaces/DemoProjects/exchange_rate_demo/docker/offline_data"
+  currencies-file: "${offline.data-path}/currencies.json"
+  rates-folder: "${offline.data-path}/rates/"
+  rates-file-suffix: ".json"

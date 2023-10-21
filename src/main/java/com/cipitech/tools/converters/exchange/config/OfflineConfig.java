@@ -16,6 +16,11 @@ import org.springframework.context.annotation.Profile;
 @Profile(Globals.Profiles.OFFLINE)
 public class OfflineConfig
 {
+	private String dataPath;
+	private String currenciesFile;
+	private String ratesFolder;
+	private String ratesFileSuffix;
+
 	public OfflineConfig()
 	{
 		log.debug("OfflineConfig Loaded...");

@@ -47,7 +47,6 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 		return getRepository().findAll(Sort.by(Sort.Order.asc(Currency.CODE)));
 	}
 
-	@Transactional
 	@Override
 	public void refreshCurrencies(List<CurrencyDTO> currList)
 	{
@@ -65,7 +64,6 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 		return currencyMapper.toDTO(getRepository().findByCodeIgnoreCase(code));
 	}
 
-	@Transactional
 	@Override
 	public void removeAll()
 	{

@@ -2,6 +2,7 @@ package com.cipitech.tools.converters.exchange.error;
 
 import com.cipitech.tools.converters.exchange.error.dto.ErrorResponseDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
+import com.cipitech.tools.converters.exchange.error.exceptions.ServerErrorException;
 import com.cipitech.tools.converters.exchange.error.exceptions.WrongParametersException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 	public final ResponseEntity<ErrorResponseDTO> handleWrongParametersException(WrongParametersException ex)
 	{
 		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ServerErrorException.class)
+	public final ResponseEntity<ErrorResponseDTO> handleWrongParametersException(ServerErrorException ex)
+	{
+		return new ResponseEntity<>(getErrorDTO(ex, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(Exception.class)

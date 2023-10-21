@@ -94,7 +94,6 @@ public abstract class AbstractRateController extends AbstractController
 		return rates;
 	}
 
-	@Transactional
 	public List<ExchangeRateDTO> getDirectlyFromFetcher(String fromCurrencyCode, List<String> toCurrencyCodes)
 	{
 		// Fetch the fresh exchange rates using the fetcher

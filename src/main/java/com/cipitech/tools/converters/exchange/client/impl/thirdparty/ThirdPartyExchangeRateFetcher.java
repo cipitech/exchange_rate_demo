@@ -6,6 +6,7 @@ import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -38,7 +39,7 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 			{
 				response.getQuotes().forEach((key, value) -> ratesList.add(ExchangeRateDTO.builder()
 						.fromCurrency(CurrencyDTO.builder().code(response.getSource()).build())
-						.toCurrency(CurrencyDTO.builder().code(key.replaceFirst(response.getSource(), "")).build())
+						.toCurrency(CurrencyDTO.builder().code(key.replaceFirst(response.getSource(), StringUtils.EMPTY)).build())
 						.rate(value).build()));
 			}
 			else
