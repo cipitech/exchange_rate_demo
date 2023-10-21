@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,12 @@ public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
 			//convert json string to object
 			ratesMap = new ObjectMapper().readValue(FileUtils.getFileBytes(filename), Map.class);
 		}
+		catch (NoSuchFileException e)
+		{
+			log.error("Could not find file {}", filename, e);
+
+			throw new RecordNotFoundException(String.format("Currency with code %s does not exist.", fromCurrencyCode));
+		}
 		catch (Exception e)
 		{
 			log.error("Error while reading exchange rates file {}", filename, e);
@@ -70,10 +77,15 @@ public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
 				{
 					Double rateValue = ratesMap.get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
 
+					if(rateValue == null)
+					{
+						throw new RecordNotFoundException(String.format("Currency with code %s does not exist. Please try another currency code.", toCurrencyCode));
+					}
+
 					ratesList.add(ExchangeRateDTO.builder()
 							.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
 							.toCurrency(CurrencyDTO.builder().code(toCurrencyCode.toUpperCase()).build())
-							.rate(rateValue != null ? rateValue : -1D).build());
+							.rate(rateValue).build());
 				});
 			}
 

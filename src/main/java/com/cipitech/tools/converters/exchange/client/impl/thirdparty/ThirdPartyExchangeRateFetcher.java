@@ -4,6 +4,7 @@ import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
+import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +49,15 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 				{
 					Double rateValue = response.getQuotes().get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
 
+					if(rateValue == null)
+					{
+						throw new RecordNotFoundException(String.format("Currency with code %s does not exist. Please try another currency code.", toCurrencyCode));
+					}
+
 					ratesList.add(ExchangeRateDTO.builder()
 							.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
 							.toCurrency(CurrencyDTO.builder().code(toCurrencyCode.toUpperCase()).build())
-							.rate(rateValue != null ? rateValue : -1D).build());
+							.rate(rateValue).build());
 				});
 			}
 		}

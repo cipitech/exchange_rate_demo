@@ -2,6 +2,7 @@ package com.cipitech.tools.converters.exchange.controller;
 
 import com.cipitech.tools.converters.exchange.client.api.AbstractFetcher;
 import com.cipitech.tools.converters.exchange.config.AppConfig;
+import com.cipitech.tools.converters.exchange.dto.SuccessResponseDTO;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public abstract class AbstractController
 
 	protected abstract AbstractFetcher getFetcher();
 
-	protected ResponseEntity<String> pong()
+	protected ResponseEntity<SuccessResponseDTO> pong()
 	{
-		return new ResponseEntity<>("pong", HttpStatus.OK);
+		return new ResponseEntity<>(SuccessResponseDTO.builder().message("pong").build(), HttpStatus.OK);
 	}
 }

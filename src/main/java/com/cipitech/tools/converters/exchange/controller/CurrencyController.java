@@ -3,6 +3,7 @@ package com.cipitech.tools.converters.exchange.controller;
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
 import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
+import com.cipitech.tools.converters.exchange.dto.SuccessResponseDTO;
 import com.cipitech.tools.converters.exchange.error.dto.ErrorResponseDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
@@ -39,7 +40,7 @@ public class CurrencyController extends AbstractController
 	}
 
 	@GetMapping(Globals.Endpoints.PING)
-	public ResponseEntity<String> ping()
+	public ResponseEntity<SuccessResponseDTO> ping()
 	{
 		return pong();
 	}
@@ -65,24 +66,24 @@ public class CurrencyController extends AbstractController
 
 	@DeleteMapping(Globals.Endpoints.Currency.all)
 	@Operation(summary = "Delete all the currencies that exist in the system. Exchange Rate records will be deleted as well.")
-	public ResponseEntity<String> deleteAll()
+	public ResponseEntity<SuccessResponseDTO> deleteAll()
 	{
 		log.info("deleteAll started...");
 
 		currencyService.removeAll();
 
-		return new ResponseEntity<>("All currencies were removed from the database.", HttpStatus.OK);
+		return new ResponseEntity<>(SuccessResponseDTO.builder().message("All currencies were removed from the database.").build(), HttpStatus.OK);
 	}
 
 	@GetMapping(Globals.Endpoints.Currency.refresh)
 	@Operation(summary = "Delete any currencies from the system and reimport them from the remote datasource.")
-	public ResponseEntity<String> refreshCurrencies()
+	public ResponseEntity<SuccessResponseDTO> refreshCurrencies()
 	{
 		log.info("refreshCurrencies started...");
 
 		refresh();
 
-		return new ResponseEntity<>("Currencies were fetched from source and added to the database.", HttpStatus.OK);
+		return new ResponseEntity<>(SuccessResponseDTO.builder().message("Currencies were fetched from source and added to the database.").build(), HttpStatus.OK);
 	}
 
 	@GetMapping("/{" + Globals.Parameters.Currency.code + "}")

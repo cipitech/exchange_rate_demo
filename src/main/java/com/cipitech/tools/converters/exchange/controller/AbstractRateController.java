@@ -8,7 +8,6 @@ import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.service.ExchangeRateService;
 import com.cipitech.tools.converters.exchange.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;

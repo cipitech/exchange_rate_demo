@@ -5,6 +5,7 @@ import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.ConversionRateDTO;
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
+import com.cipitech.tools.converters.exchange.dto.SuccessResponseDTO;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.service.ExchangeRateService;
 import com.cipitech.tools.converters.exchange.utils.ConversionUtils;
@@ -34,7 +35,7 @@ public class ConversionController extends AbstractRateController
 	}
 
 	@GetMapping(Globals.Endpoints.PING)
-	public ResponseEntity<String> ping()
+	public ResponseEntity<SuccessResponseDTO> ping()
 	{
 		return pong();
 	}
