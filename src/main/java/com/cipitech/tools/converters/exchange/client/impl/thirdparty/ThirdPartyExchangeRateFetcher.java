@@ -49,9 +49,14 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 				{
 					Double rateValue = response.getQuotes().get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
 
+					if(toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
+					{
+						rateValue = 1D;
+					}
+
 					if(rateValue == null)
 					{
-						throw new RecordNotFoundException(String.format("Currency with code %s does not exist. Please try another currency code.", toCurrencyCode));
+						throw new RecordNotFoundException(String.format("Exchange rate from currency %s to currency %s does not exist. Please try another currency code.", fromCurrencyCode.toUpperCase(), toCurrencyCode.toUpperCase()));
 					}
 
 					ratesList.add(ExchangeRateDTO.builder()
@@ -63,11 +68,16 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 		}
 		else
 		{
-			log.error("The call to the third party API was not successful");
+			StringBuffer sb = new StringBuffer();
+
+			sb.append("The call to the third party API was not successful. ");
 			if (response.getError() != null)
 			{
-				log.error("Error Code [{}]: {}", response.getError().getCode(), response.getError().getInfo());
+				sb.append(String.format("Error Code [%s]: %s", response.getError().getCode(), response.getError().getInfo()));
 			}
+
+			log.error(sb.toString());
+			throw new RecordNotFoundException(sb.toString());
 		}
 
 		return ratesList;

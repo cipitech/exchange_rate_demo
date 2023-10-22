@@ -35,6 +35,13 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 	}
 
 	@Override
+	public List<String> getAllCurrencyCodesExcept(String exceptCode)
+	{
+		List<String> toCurrencyCodes = getAllCurrencyCodes();
+		return toCurrencyCodes.stream().filter(code -> !exceptCode.equalsIgnoreCase(code)).toList();
+	}
+
+	@Override
 	public List<CurrencyDTO> getAllCurrencyDTOs()
 	{
 		return getAllCurrencies().stream().map(currencyMapper::toDTO).toList();

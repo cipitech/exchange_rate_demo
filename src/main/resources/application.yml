@@ -32,3 +32,4 @@ swagger:
 app:
   delay-new-request-seconds: 60
   default-from-currency: "EUR"
+  ignore-currencies: "SVC"

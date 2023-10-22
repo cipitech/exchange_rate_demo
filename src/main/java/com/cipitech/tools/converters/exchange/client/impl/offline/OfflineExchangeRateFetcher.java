@@ -77,9 +77,14 @@ public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
 				{
 					Double rateValue = ratesMap.get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
 
+					if(toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
+					{
+						rateValue = 1D;
+					}
+
 					if(rateValue == null)
 					{
-						throw new RecordNotFoundException(String.format("Currency with code %s does not exist. Please try another currency code.", toCurrencyCode));
+						throw new RecordNotFoundException(String.format("Exchange rate from currency %s to currency %s does not exist. Please try another currency code.", fromCurrencyCode.toUpperCase(), toCurrencyCode.toUpperCase()));
 					}
 
 					ratesList.add(ExchangeRateDTO.builder()

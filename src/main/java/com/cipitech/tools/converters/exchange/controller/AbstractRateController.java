@@ -8,6 +8,8 @@ import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.service.ExchangeRateService;
 import com.cipitech.tools.converters.exchange.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -34,6 +36,9 @@ public abstract class AbstractRateController extends AbstractController
 	{
 		List<ExchangeRateDTO> rates = new ArrayList<>();
 
+		fromCurrencyCode = Jsoup.clean(fromCurrencyCode, Safelist.basic());
+		toCurrencyCode = Jsoup.clean(toCurrencyCode, Safelist.basic());
+
 		if (delay == null || delay < 0)
 		{
 			delay = getConfig().getDelayNewRequestSeconds();
@@ -44,7 +49,7 @@ public abstract class AbstractRateController extends AbstractController
 			fromCurrencyCode = getConfig().getDefaultFromCurrency();
 		}
 
-		List<String> toCurrencyCodes = StringUtils.isBlank(toCurrencyCode) ? null : Arrays.asList(toCurrencyCode.split(","));
+		List<String> toCurrencyCodes = StringUtils.isBlank(toCurrencyCode) ? null : Arrays.stream(toCurrencyCode.split(",")).map(String::trim).toList();
 
 		if (delay.equals(0L))
 		{
@@ -60,7 +65,7 @@ public abstract class AbstractRateController extends AbstractController
 				{
 					refreshCurrenciesIfNeeded();
 
-					toCurrencyCodes = currencyService.getAllCurrencyCodes();
+					toCurrencyCodes = currencyService.getAllCurrencyCodesExcept(fromCurrencyCode);
 				}
 
 				List<String> notFoundCodes = new ArrayList<>();

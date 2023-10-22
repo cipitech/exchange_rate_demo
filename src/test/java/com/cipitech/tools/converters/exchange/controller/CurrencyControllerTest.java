@@ -100,4 +100,16 @@ public class CurrencyControllerTest extends TestCase
 				.andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is("USD")))
 				.andReturn().getResponse().getContentAsString());
 	}
+
+	@Test
+	public void whenGetByWrongCode_thenReturnNotFound() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.Currency.CONTROLLER + "/USDT")
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.statusCode", Matchers.is(404)))
+				.andReturn().getResponse().getContentAsString());
+	}
 }

@@ -2,6 +2,7 @@ package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.utils.Globals;
@@ -17,10 +18,12 @@ import java.util.List;
 public class ThirdPartyCurrencyFetcher implements CurrencyFetcher
 {
 	private final ThirdPartyWebClient thirdPartyWebClient;
+	private final AppConfig appConfig;
 
-	public ThirdPartyCurrencyFetcher(ThirdPartyWebClient thirdPartyWebClient)
+	public ThirdPartyCurrencyFetcher(ThirdPartyWebClient thirdPartyWebClient, AppConfig appConfig)
 	{
 		this.thirdPartyWebClient = thirdPartyWebClient;
+		this.appConfig = appConfig;
 	}
 
 	@Override
@@ -30,7 +33,9 @@ public class ThirdPartyCurrencyFetcher implements CurrencyFetcher
 
 		if (response.getSuccess())
 		{
-			return response.getCurrencies().entrySet().stream().map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
+			return response.getCurrencies().entrySet().stream()
+					.filter(mapEntry -> mapEntry.getKey() != null && !this.appConfig.getIgnoreCurrencies().toUpperCase().contains(mapEntry.getKey().toUpperCase()))
+					.map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
 		}
 		else
 		{

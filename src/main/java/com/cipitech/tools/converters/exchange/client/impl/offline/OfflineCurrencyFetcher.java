@@ -1,6 +1,7 @@
 package com.cipitech.tools.converters.exchange.client.impl.offline;
 
 import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
+import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.config.OfflineConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
@@ -22,10 +23,12 @@ import java.util.Map;
 public class OfflineCurrencyFetcher implements CurrencyFetcher
 {
 	private final OfflineConfig config;
+	private final AppConfig     appConfig;
 
-	public OfflineCurrencyFetcher(OfflineConfig config)
+	public OfflineCurrencyFetcher(OfflineConfig config, AppConfig appConfig)
 	{
 		this.config = config;
+		this.appConfig = appConfig;
 	}
 
 	@Override
@@ -49,7 +52,9 @@ public class OfflineCurrencyFetcher implements CurrencyFetcher
 		{
 			log.debug("Found {} new currencies in {}", currencyMap.size(), config.getCurrenciesFile());
 
-			return currencyMap.entrySet().stream().map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
+			return currencyMap.entrySet().stream()
+					.filter(mapEntry -> mapEntry.getKey() != null && !this.appConfig.getIgnoreCurrencies().toUpperCase().contains(mapEntry.getKey().toUpperCase()))
+					.map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
 		}
 		else
 		{

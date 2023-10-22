@@ -79,6 +79,82 @@ public class ExchangeRateControllerTest extends TestCase
 	}
 
 	@Test
+	public void whenGetValueWithTheSameFromAndTo_thenReturnOK() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.ExchangeRate.CONTROLLER + Globals.Endpoints.ExchangeRate.value)
+								.queryParam(Globals.Parameters.ExchangeRate.from, "USD")
+								.queryParam(Globals.Parameters.ExchangeRate.to, "USD")
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].fromCurrency.code", Matchers.is("USD")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].toCurrency.code", Matchers.is("USD")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].rate", Matchers.is(1D)))
+				.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
+	public void whenGetValueWithWrongFrom_thenReturnNotFound() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.ExchangeRate.CONTROLLER + Globals.Endpoints.ExchangeRate.value)
+								.queryParam(Globals.Parameters.ExchangeRate.from, "EURT")
+								.queryParam(Globals.Parameters.ExchangeRate.delay, "0")
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.statusCode", Matchers.is(404)))
+				.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
+	public void whenGetValueWithWrongTo_thenReturnNotFound() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.ExchangeRate.CONTROLLER + Globals.Endpoints.ExchangeRate.value)
+								.queryParam(Globals.Parameters.ExchangeRate.from, "EUR")
+								.queryParam(Globals.Parameters.ExchangeRate.to, "USDT")
+								.queryParam(Globals.Parameters.ExchangeRate.delay, "0")
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.statusCode", Matchers.is(404)))
+				.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
+	public void whenGetValueWithDelay0MultipleToCurrency_thenReturnOK() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.ExchangeRate.CONTROLLER + Globals.Endpoints.ExchangeRate.value)
+								.queryParam(Globals.Parameters.ExchangeRate.from, "EUR")
+								.queryParam(Globals.Parameters.ExchangeRate.to, "USD,GBP,  JPY")
+								.queryParam(Globals.Parameters.ExchangeRate.delay, "0")
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].fromCurrency.code", Matchers.is("EUR")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].toCurrency.code", Matchers.is("USD")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].rate", Matchers.is(Matchers.notNullValue())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
+				.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
+	public void whenGetValueWithNoParameters_thenReturnOK() throws Exception
+	{
+		log.info(mockMvc.perform(
+						MockMvcRequestBuilders.get(Globals.Endpoints.ExchangeRate.CONTROLLER + Globals.Endpoints.ExchangeRate.value)
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].fromCurrency.code", Matchers.is("EUR")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].rate", Matchers.is(Matchers.notNullValue())))
+				.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
 	public void whenGetValueWithNoToCurrencyAndNoFromCurrencyAndDelay0_thenReturnOK() throws Exception
 	{
 		log.info(mockMvc.perform(

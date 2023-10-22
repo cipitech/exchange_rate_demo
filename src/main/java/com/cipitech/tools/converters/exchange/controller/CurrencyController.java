@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -100,6 +102,8 @@ public class CurrencyController extends AbstractController
 	{
 		log.info("getByCode started...");
 		log.debug("code [{}]", code);
+
+		code = Jsoup.clean(code, Safelist.basic());
 
 		if (!currencyService.exist())
 		{

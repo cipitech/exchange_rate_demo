@@ -4,6 +4,7 @@ import com.cipitech.tools.converters.exchange.error.dto.ErrorResponseDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.error.exceptions.ServerErrorException;
 import com.cipitech.tools.converters.exchange.error.exceptions.WrongParametersException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
+@Slf4j
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 {
 	@ExceptionHandler(RecordNotFoundException.class)
@@ -43,6 +45,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 
 	private ErrorResponseDTO getErrorDTO(Exception ex, HttpStatus status)
 	{
-		return ErrorResponseDTO.builder().statusCode(status.value()).message(status.getReasonPhrase()).details(ex.getLocalizedMessage()).build();
+		log.error(ex.toString(), ex);
+		return ErrorResponseDTO.builder().statusCode(status.value()).message(status.getReasonPhrase()).details(ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ex.toString()).build();
 	}
 }

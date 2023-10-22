@@ -11,6 +11,8 @@ public interface CurrencyService extends BaseService<Currency, CurrencyRepositor
 {
 	List<String> getAllCurrencyCodes();
 
+	List<String> getAllCurrencyCodesExcept(String exceptCode);
+
 	List<CurrencyDTO> getAllCurrencyDTOs();
 
 	List<Currency> getAllCurrencies();

@@ -15,4 +15,5 @@ public class AppConfig
 {
 	private Long   delayNewRequestSeconds; // The seconds to wait before calling the third party exchange rate API
 	private String defaultFromCurrency; // The default currency code to put as the source if the used does not specify one.
+	private String ignoreCurrencies; //Some currencies produce an error in the third api website, so we must ignore them in order for our application to run without problems.
 }
