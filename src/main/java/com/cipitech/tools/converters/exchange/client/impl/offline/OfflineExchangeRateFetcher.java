@@ -1,8 +1,7 @@
 package com.cipitech.tools.converters.exchange.client.impl.offline;
 
-import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
+import com.cipitech.tools.converters.exchange.client.api.AbstractExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.config.OfflineConfig;
-import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.error.exceptions.ServerErrorException;
@@ -11,7 +10,6 @@ import com.cipitech.tools.converters.exchange.utils.Globals;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,35 +19,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The ExchangeRateFetcher implementation for the offline (file-system) datasource
+ */
+
 @Slf4j
 @Service
 @Profile(Globals.Profiles.OFFLINE)
-public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
+public class OfflineExchangeRateFetcher extends AbstractExchangeRateFetcher
 {
-	private final OfflineConfig config;
+	private final OfflineConfig offlineConfig;
 
-	public OfflineExchangeRateFetcher(OfflineConfig config)
+	public OfflineExchangeRateFetcher(OfflineConfig offlineConfig)
 	{
-		this.config = config;
+		this.offlineConfig = offlineConfig;
 	}
 
 	@Override
 	public List<ExchangeRateDTO> getExchangeRateBetweenCurrencies(@NonNull String fromCurrencyCode, List<String> toCurrencyCodes)
 	{
+		log.trace("Getting exchange rate info for currency {}", fromCurrencyCode.toUpperCase());
+
 		Map<String, Double> ratesMap;
 
-		String filename = config.getRatesFolder() + fromCurrencyCode + config.getRatesFileSuffix();
+		// The filename must be of the type "<3-LETTER CURRENCY CODE>.json", e.g. EUR.json
+		String filename = offlineConfig.getRatesFolder() + fromCurrencyCode + offlineConfig.getRatesFileSuffix();
 
+		// Read the JSON file that contains a Map of all the available exchanges rate between the from-currency and all the other available currencies
 		try
 		{
-			//convert json string to object
+			// Convert json string to map
 			ratesMap = new ObjectMapper().readValue(FileUtils.getFileBytes(filename), Map.class);
 		}
 		catch (NoSuchFileException e)
 		{
 			log.error("Could not find file {}", filename, e);
 
-			throw new RecordNotFoundException(String.format("Currency with code %s does not exist.", fromCurrencyCode));
+			throw new RecordNotFoundException(String.format("Currency with code %s does not exist in our datasource. Please ask us to generate the necessary data.", fromCurrencyCode));
 		}
 		catch (Exception e)
 		{
@@ -58,40 +64,23 @@ public class OfflineExchangeRateFetcher implements ExchangeRateFetcher
 			throw new ServerErrorException("Could not read the JSON file that contains the exchange rates information.");
 		}
 
+		// If the exchange rates file was not empty
 		if (!CollectionUtils.isEmpty(ratesMap))
 		{
 			log.debug("Found {} new rates in {}", ratesMap.size(), filename);
 
 			List<ExchangeRateDTO> ratesList = new ArrayList<>();
 
+			// If no target currencies were provided then all the available combinations
+			// for the source currency and every other available currency must be provided.
 			if (CollectionUtils.isEmpty(toCurrencyCodes))
 			{
-				ratesMap.forEach((key, value) -> ratesList.add(ExchangeRateDTO.builder()
-						.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
-						.toCurrency(CurrencyDTO.builder().code(key.replaceFirst(fromCurrencyCode.toUpperCase(), StringUtils.EMPTY)).build())
-						.rate(value).build()));
+				processAllCurrencies(ratesMap, fromCurrencyCode.toUpperCase(), ratesList);
 			}
 			else
 			{
 				toCurrencyCodes.forEach(toCurrencyCode ->
-				{
-					Double rateValue = ratesMap.get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
-
-					if(toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
-					{
-						rateValue = 1D;
-					}
-
-					if(rateValue == null)
-					{
-						throw new RecordNotFoundException(String.format("Exchange rate from currency %s to currency %s does not exist. Please try another currency code.", fromCurrencyCode.toUpperCase(), toCurrencyCode.toUpperCase()));
-					}
-
-					ratesList.add(ExchangeRateDTO.builder()
-							.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
-							.toCurrency(CurrencyDTO.builder().code(toCurrencyCode.toUpperCase()).build())
-							.rate(rateValue).build());
-				});
+						processSingleCurrency(ratesMap, fromCurrencyCode, toCurrencyCode, ratesList));
 			}
 
 			return ratesList;

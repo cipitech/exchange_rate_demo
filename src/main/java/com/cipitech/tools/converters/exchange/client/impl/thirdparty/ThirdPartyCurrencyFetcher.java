@@ -1,6 +1,6 @@
 package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 
-import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
+import com.cipitech.tools.converters.exchange.client.api.AbstractCurrencyFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
 import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
@@ -13,44 +13,43 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * The CurrencyFetcher implementation for the third party (Rest API) datasource
+ */
+
 @Slf4j
 @Primary
 @Service
 @Profile(Globals.Profiles.THIRD_PARTY)
-public class ThirdPartyCurrencyFetcher implements CurrencyFetcher
+public class ThirdPartyCurrencyFetcher extends AbstractCurrencyFetcher
 {
 	private final ThirdPartyWebClient thirdPartyWebClient;
-	private final AppConfig appConfig;
 
-	public ThirdPartyCurrencyFetcher(ThirdPartyWebClient thirdPartyWebClient, AppConfig appConfig)
+	public ThirdPartyCurrencyFetcher(AppConfig appConfig, ThirdPartyWebClient thirdPartyWebClient)
 	{
+		super(appConfig);
 		this.thirdPartyWebClient = thirdPartyWebClient;
-		this.appConfig = appConfig;
 	}
 
 	@Override
 	public List<CurrencyDTO> getAllCurrencies()
 	{
+		log.trace("Third-Party: getAllCurrencies");
+
+		// Call the endpoint that returns the currencies
 		ThirdPartyResponseDTO response = thirdPartyWebClient.callCurrencyEndpoint();
 
+		// If the call was successful then the "success" property is set to true
 		if (response.getSuccess())
 		{
-			return response.getCurrencies().entrySet().stream()
-					.filter(mapEntry -> mapEntry.getKey() != null && !this.appConfig.getIgnoreCurrencies().toUpperCase().contains(mapEntry.getKey().toUpperCase()))
-					.map(mapEntry -> CurrencyDTO.builder().code(mapEntry.getKey()).description(mapEntry.getValue()).build()).toList();
+			return convertMapToDTO(response.getCurrencies());
 		}
+		// If the call was not successful the "success" property is set to false.
 		else
 		{
-			StringBuffer sb = new StringBuffer();
+			log.error("Currency endpoint call was not successful.");
 
-			sb.append("The call to the third party API was not successful. ");
-			if (response.getError() != null)
-			{
-				sb.append(String.format("Error Code [%s]: %s", response.getError().getCode(), response.getError().getInfo()));
-			}
-
-			log.error(sb.toString());
-			throw new RecordNotFoundException(sb.toString());
+			throw new RecordNotFoundException(response.getErrorMessageInfo());
 		}
 	}
 }

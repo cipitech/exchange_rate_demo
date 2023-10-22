@@ -1,13 +1,11 @@
 package com.cipitech.tools.converters.exchange.client.impl.thirdparty;
 
-import com.cipitech.tools.converters.exchange.client.api.ExchangeRateFetcher;
+import com.cipitech.tools.converters.exchange.client.api.AbstractExchangeRateFetcher;
 import com.cipitech.tools.converters.exchange.client.impl.thirdparty.dto.ThirdPartyResponseDTO;
-import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -16,11 +14,15 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The ExchangeRateFetcher implementation for the third party (Rest API) datasource
+ */
+
 @Slf4j
 @Primary
 @Service
 @Profile(Globals.Profiles.THIRD_PARTY)
-public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
+public class ThirdPartyExchangeRateFetcher extends AbstractExchangeRateFetcher
 {
 	private final ThirdPartyWebClient thirdPartyWebClient;
 
@@ -32,54 +34,34 @@ public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
 	@Override
 	public List<ExchangeRateDTO> getExchangeRateBetweenCurrencies(String fromCurrencyCode, List<String> toCurrencyCodes)
 	{
+		log.trace("Getting exchange rate info for currency {}", fromCurrencyCode.toUpperCase());
+
+		// Call the endpoint that returns the exchange rates
 		ThirdPartyResponseDTO response = thirdPartyWebClient.callRateEndpoint(fromCurrencyCode, toCurrencyCodes);
 
 		List<ExchangeRateDTO> ratesList = new ArrayList<>();
 
+		// If the call was successful then the "success" property is set to true
 		if (response.getSuccess())
 		{
+			// If no target currencies were provided then all the available combinations
+			// for the source currency and every other available currency must be provided.
 			if (CollectionUtils.isEmpty(toCurrencyCodes))
 			{
-				response.getQuotes().forEach((key, value) -> ratesList.add(ExchangeRateDTO.builder()
-						.fromCurrency(CurrencyDTO.builder().code(response.getSource()).build())
-						.toCurrency(CurrencyDTO.builder().code(key.replaceFirst(response.getSource(), StringUtils.EMPTY)).build())
-						.rate(value).build()));
+				processAllCurrencies(response.getQuotes(), response.getSource(), ratesList);
 			}
 			else
 			{
 				toCurrencyCodes.forEach(toCurrencyCode ->
-				{
-					Double rateValue = response.getQuotes().get(fromCurrencyCode.toUpperCase() + toCurrencyCode.toUpperCase());
-
-					if(toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
-					{
-						rateValue = 1D;
-					}
-
-					if(rateValue == null)
-					{
-						throw new RecordNotFoundException(String.format("Exchange rate from currency %s to currency %s does not exist. Please try another currency code.", fromCurrencyCode.toUpperCase(), toCurrencyCode.toUpperCase()));
-					}
-
-					ratesList.add(ExchangeRateDTO.builder()
-							.fromCurrency(CurrencyDTO.builder().code(fromCurrencyCode.toUpperCase()).build())
-							.toCurrency(CurrencyDTO.builder().code(toCurrencyCode.toUpperCase()).build())
-							.rate(rateValue).build());
-				});
+						processSingleCurrency(response.getQuotes(), fromCurrencyCode, toCurrencyCode, ratesList));
 			}
 		}
+		// If the call was not successful the "success" property is set to false.
 		else
 		{
-			StringBuffer sb = new StringBuffer();
+			log.error("Exchange rates endpoint call was not successful");
 
-			sb.append("The call to the third party API was not successful. ");
-			if (response.getError() != null)
-			{
-				sb.append(String.format("Error Code [%s]: %s", response.getError().getCode(), response.getError().getInfo()));
-			}
-
-			log.error(sb.toString());
-			throw new RecordNotFoundException(sb.toString());
+			throw new RecordNotFoundException(response.getErrorMessageInfo());
 		}
 
 		return ratesList;
