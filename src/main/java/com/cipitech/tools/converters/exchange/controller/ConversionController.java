@@ -47,6 +47,7 @@ public class ConversionController extends AbstractRateController
 			@RequestParam(value = Globals.Parameters.Conversion.delay, required = false) Long delay)
 	{
 		log.info("getValue started...");
+		log.debug("amount [{}]", amount);
 
 		if (amount == null || amount < 0)
 		{

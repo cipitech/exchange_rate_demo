@@ -6,7 +6,8 @@ You can view a live demo of this repository here: http://185.217.127.232:8082/ap
 ### What is this repository for? ###
 An API that provides functionality for exchange rates and currency conversions.
 It loads up-to-date exchange rate data from two types of datasources depending on the 
-spring-boot profile that you choose:
+spring-boot profile that you choose. You can only choose one profile at a time. 
+If you add both profiles then by default the "third-party" will be activated.
 
 ### Profiles ###
 #### "third-party" ####
@@ -21,6 +22,8 @@ currencies you must create additional files.
 ### Configuration ###
 All the configuration is done at application-*.yml properties. In order to override the configuration 
 you must either edit these files or add VM options before you run the application.
+
+**Note**: The same applies if you want to run the tests included. You must set the necessary properties.
 
 The 3 properties that MUST be set before you run (because i have put dummy data and you won't be able to run) are:
 * **spring.profiles.active**  *#Choose either "third-party" OR "offline"*

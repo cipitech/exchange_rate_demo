@@ -7,6 +7,7 @@ import com.cipitech.tools.converters.exchange.dto.ExchangeRateDTO;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.service.ExchangeRateService;
 import com.cipitech.tools.converters.exchange.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public abstract class AbstractRateController extends AbstractController
 {
 	private final ExchangeRateFetcher rateFetcher;
@@ -34,10 +36,20 @@ public abstract class AbstractRateController extends AbstractController
 
 	public List<ExchangeRateDTO> getExchangeRatesList(String fromCurrencyCode, String toCurrencyCode, Long delay)
 	{
+		log.debug("fromCurrencyCode [{}]", fromCurrencyCode);
+		log.debug("toCurrencyCode [{}]", toCurrencyCode);
+		log.debug("delay [{}]", delay);
+
 		List<ExchangeRateDTO> rates = new ArrayList<>();
 
-		fromCurrencyCode = Jsoup.clean(fromCurrencyCode, Safelist.basic());
-		toCurrencyCode = Jsoup.clean(toCurrencyCode, Safelist.basic());
+		if(fromCurrencyCode != null)
+		{
+			fromCurrencyCode = Jsoup.clean(fromCurrencyCode, Safelist.basic());
+		}
+		if(toCurrencyCode != null)
+		{
+			toCurrencyCode = Jsoup.clean(toCurrencyCode, Safelist.basic());
+		}
 
 		if (delay == null || delay < 0)
 		{

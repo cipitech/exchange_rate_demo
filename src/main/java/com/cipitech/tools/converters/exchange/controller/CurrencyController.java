@@ -103,7 +103,10 @@ public class CurrencyController extends AbstractController
 		log.info("getByCode started...");
 		log.debug("code [{}]", code);
 
-		code = Jsoup.clean(code, Safelist.basic());
+		if(code != null)
+		{
+			code = Jsoup.clean(code, Safelist.basic());
+		}
 
 		if (!currencyService.exist())
 		{

@@ -8,6 +8,7 @@ import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundExc
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Primary
 @Service
 @Profile(Globals.Profiles.THIRD_PARTY)
 public class ThirdPartyExchangeRateFetcher implements ExchangeRateFetcher
