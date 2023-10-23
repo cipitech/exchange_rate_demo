@@ -40,14 +40,14 @@ public abstract class AbstractExchangeRateFetcher implements ExchangeRateFetcher
 		// So the rateValue will be null.
 		// But it is safe to assume that the exchange rate from one currency
 		// to the same currency is 1.
-		if(toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
+		if (toCurrencyCode.equalsIgnoreCase(fromCurrencyCode))
 		{
 			rateValue = 1D;
 		}
 
 		// If no entry was found in the ratesMap that means that the user
 		// requested a source currency that does not exist so an error must be returned.
-		if(rateValue == null)
+		if (rateValue == null)
 		{
 			log.error("Currency {} does not exist.", toCurrencyCode);
 

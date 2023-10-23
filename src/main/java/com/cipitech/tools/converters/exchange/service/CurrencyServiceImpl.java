@@ -19,7 +19,7 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 {
 	private final CurrencyRepository  currencyRepository;
 	private final ExchangeRateService exchangeRateService;
-	private final CurrencyMapper currencyMapper;
+	private final CurrencyMapper      currencyMapper;
 
 	public CurrencyServiceImpl(CurrencyRepository currencyRepository, ExchangeRateService exchangeRateService, CurrencyMapper currencyMapper)
 	{
@@ -73,6 +73,8 @@ public class CurrencyServiceImpl extends BaseServiceImpl<Currency, CurrencyRepos
 	@Override
 	public void removeAll()
 	{
+		// Before we remove the currencies we must first remove all the exchange rate entities
+		// because they have a foreign key on the currencies
 		exchangeRateService.removeAll();
 
 		super.removeAll();

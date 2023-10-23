@@ -19,6 +19,11 @@ import org.springframework.context.annotation.Primary;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Here we perform the initialization and configuration of the Swagger UI.
+ * It represents also the Spring boot properties that are needed for swagger to work.
+ */
+
 @Slf4j
 @Getter
 @Setter
@@ -26,14 +31,14 @@ import java.util.List;
 @ConfigurationProperties(prefix = "swagger")
 public class SwaggerConfig
 {
-	private Boolean     displayRequestDuration;
-	private String      version;
-	private String      title;
-	private String      description;
-	private ContactInfo contact;
+	private Boolean     displayRequestDuration; // Whether to enable or disable the functionality of swagger UI that shows how many milliseconds the API took to respond.
+	private String      version; // The version of our application
+	private String      title; // The name of our Rest API
+	private String      description; // A brief description of our Rest API
+	private ContactInfo contact; // The contact information displayed in the "Contact" section of Swagger UI
 
 	@Value("${server.servlet.context-path}")
-	private String contextPath;
+	private String contextPath; // Our web applications' context path in tomcat. It is needed by swagger so that it can create the rest calls.
 
 	public SwaggerConfig()
 	{

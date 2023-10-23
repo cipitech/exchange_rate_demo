@@ -4,6 +4,10 @@ import com.cipitech.tools.converters.exchange.model.base.BaseRecord;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * The hibernate record that represents an exchange rate
+ */
+
 @Getter
 @Setter
 @AllArgsConstructor

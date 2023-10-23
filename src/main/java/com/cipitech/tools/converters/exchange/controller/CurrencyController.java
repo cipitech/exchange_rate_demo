@@ -4,16 +4,11 @@ import com.cipitech.tools.converters.exchange.client.api.CurrencyFetcher;
 import com.cipitech.tools.converters.exchange.config.AppConfig;
 import com.cipitech.tools.converters.exchange.dto.CurrencyDTO;
 import com.cipitech.tools.converters.exchange.dto.SuccessResponseDTO;
-import com.cipitech.tools.converters.exchange.error.dto.ErrorResponseDTO;
 import com.cipitech.tools.converters.exchange.error.exceptions.RecordNotFoundException;
 import com.cipitech.tools.converters.exchange.service.CurrencyService;
 import com.cipitech.tools.converters.exchange.utils.Globals;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -23,6 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+/**
+ * The controller that provides the currency endpoints.
+ */
 
 @Slf4j
 @RestController
@@ -41,6 +40,7 @@ public class CurrencyController extends AbstractController
 	}
 
 	@GetMapping(Globals.Endpoints.PING)
+	@Operation(summary = "Check if this API is healthy")
 	public ResponseEntity<SuccessResponseDTO> ping()
 	{
 		return pong();
@@ -49,27 +49,26 @@ public class CurrencyController extends AbstractController
 	@GetMapping(Globals.Endpoints.Currency.all)
 	@Operation(summary = "Get a list of all the currencies that exist in the system")
 	public ResponseEntity<List<?>> getAll(
-			@Parameter(description = "Display the currency's full name", example = "true")
+			@Parameter(description = "Display the currency's full name", example = "false")
 			@RequestParam(value = Globals.Parameters.Currency.showDescription, defaultValue = "false", required = false) Boolean showDescription)
 	{
-		log.info("getAll started...");
+		log.info("getAll called");
 		log.debug("showDescription [{}]", showDescription);
 
+		// Refresh currencies if none exist in the database
 		if (!currencyService.exist())
 		{
 			refresh();
 		}
 
-		List<?> result = showDescription ? currencyService.getAllCurrencyDTOs() : currencyService.getAllCurrencyCodes();
-
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(showDescription ? currencyService.getAllCurrencyDTOs() : currencyService.getAllCurrencyCodes());
 	}
 
 	@DeleteMapping(Globals.Endpoints.Currency.all)
 	@Operation(summary = "Delete all the currencies that exist in the system.", description = "Note: Exchange Rate records will be deleted as well.")
 	public ResponseEntity<SuccessResponseDTO> deleteAll()
 	{
-		log.info("deleteAll started...");
+		log.info("deleteAll called");
 
 		currencyService.removeAll();
 
@@ -77,10 +76,10 @@ public class CurrencyController extends AbstractController
 	}
 
 	@GetMapping(Globals.Endpoints.Currency.refresh)
-	@Operation(summary = "Delete any currencies from the system and reimport them from the remote datasource.")
+	@Operation(summary = "Delete any currencies from the system and reimport them from the remote datasource.", description = "Note: Exchange Rate records will be deleted as well.")
 	public ResponseEntity<SuccessResponseDTO> refreshCurrencies()
 	{
-		log.info("refreshCurrencies started...");
+		log.info("refreshCurrencies called");
 
 		refresh();
 
@@ -88,26 +87,21 @@ public class CurrencyController extends AbstractController
 	}
 
 	@GetMapping("/{" + Globals.Parameters.Currency.code + "}")
-	@Operation(summary = "Check if a currency with the provided code exists in the system.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
-					content = @Content(
-							schema = @Schema(implementation = CurrencyDTO.class))),
-			@ApiResponse(responseCode = "404",
-					content = @Content(
-							schema = @Schema(implementation = ErrorResponseDTO.class)))})
+	@Operation(summary = "Check if a currency with the provided code exists in the system and get its information.")
 	public ResponseEntity<CurrencyDTO> getByCode(
 			@Parameter(description = "The 3-letter code of the currency to be checked.", example = "EUR")
 			@PathVariable String code)
 	{
-		log.info("getByCode started...");
+		log.info("getByCode called");
 		log.debug("code [{}]", code);
 
-		if(code != null)
+		// Sanitize the user input parameter
+		if (code != null)
 		{
 			code = Jsoup.clean(code, Safelist.basic());
 		}
 
+		// Refresh currencies if none exist in the database
 		if (!currencyService.exist())
 		{
 			refresh();
@@ -116,6 +110,7 @@ public class CurrencyController extends AbstractController
 		CurrencyDTO currencyDTO = currencyService.getCurrencyDTO(code);
 		if (currencyDTO != null)
 		{
+			log.trace("Currency found [{}]", currencyDTO);
 			return ResponseEntity.ok(currencyDTO);
 		}
 
@@ -128,8 +123,14 @@ public class CurrencyController extends AbstractController
 		return currencyFetcher;
 	}
 
+	/**
+	 * call the currency fetcher to retrieve a list of currencies from the
+	 * external datasource and save those currencies in our database.
+	 */
 	private void refresh()
 	{
+		log.trace("Going to refresh the currencies.");
+
 		currencyService.refreshCurrencies(getFetcher().getAllCurrencies());
 	}
 }

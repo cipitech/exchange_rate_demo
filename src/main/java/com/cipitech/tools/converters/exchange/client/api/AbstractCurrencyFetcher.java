@@ -25,10 +25,11 @@ public abstract class AbstractCurrencyFetcher implements CurrencyFetcher
 	{
 		return currencyMap.entrySet().stream()
 				// Ignore any currencies that might cause a problem like SVC
-				.filter(mapEntry -> {
+				.filter(mapEntry ->
+				{
 					boolean allow = mapEntry.getKey() != null && !this.appConfig.getIgnoreCurrencies().toUpperCase().contains(mapEntry.getKey().toUpperCase());
 
-					if(!allow)
+					if (!allow)
 					{
 						log.trace("Found forbidden currency {}....going to skip it.", mapEntry.getKey());
 					}

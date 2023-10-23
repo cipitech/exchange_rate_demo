@@ -20,7 +20,7 @@ server:
     context-path: /api
 
 swagger:
-  version: "1.0"
+  version: "1.0.0"
   title: "Exchange Rate REST API"
   description: "Documentation for the Exchange Rate demo application."
   contact:

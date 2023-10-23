@@ -24,26 +24,29 @@ public class ThirdPartyResponseDTO implements Serializable
 	private String              source; //the from currency code => "EUR"
 	private Long                timestamp;
 	private Boolean             success;
-	private String              terms;
-	private String              privacy;
-	private Error               error;
+	private String              terms; // a link to the TOC page
+	private String              privacy; //a link to the privacy page
+	private Error               error; //the error information
 
 	/**
 	 * When you call the third API with the same currency code as 'from' and 'to' (e.g. EUR) then the quotes field is an empty array,
 	 * not a map as it does in a normal call.
 	 * So we have to implement a custom deserializer that checks if the quotes field is an array and returns an empty map.
+	 *
 	 * @param node the JSON node for the quotes field
 	 */
 	@JsonProperty("quotes")
 	public void setQuotes(JsonNode node)
 	{
-		if(node.isArray())
+		if (node.isArray())
 		{
 			this.quotes = new HashMap<>();
 		}
 		else
 		{
-			this.quotes = new ObjectMapper().convertValue(node, new TypeReference<>(){});
+			this.quotes = new ObjectMapper().convertValue(node, new TypeReference<>()
+			{
+			});
 		}
 	}
 

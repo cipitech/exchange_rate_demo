@@ -39,15 +39,22 @@ public abstract class BaseServiceImpl<T extends BaseRecord, R extends JpaReposit
 		return getRepository().count() > 0;
 	}
 
+	/**
+	 * Before saving an entity to the database we must set some core attributes.
+	 *
+	 * @param record the entity to update
+	 */
 	private void updateBaseInfo(T record)
 	{
 		long timeNowInMillis = DateUtils.currentTimeInMillis();
 
+		// If record is new
 		if (record.getId() == null)
 		{
 			record.setVersionNumber(1L);
 			record.setInsertedAt(timeNowInMillis);
 		}
+		// If record already exists in the database
 		else
 		{
 			record.setUpdatedAt(timeNowInMillis);

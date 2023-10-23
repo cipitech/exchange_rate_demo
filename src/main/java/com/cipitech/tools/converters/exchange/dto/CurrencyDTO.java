@@ -4,6 +4,7 @@ import com.cipitech.tools.converters.exchange.dto.base.BaseRecordDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+@ToString
 @Getter
 @Setter
 @Builder

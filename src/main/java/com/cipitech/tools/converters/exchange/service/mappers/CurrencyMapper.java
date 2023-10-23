@@ -5,6 +5,10 @@ import com.cipitech.tools.converters.exchange.model.Currency;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Mapping service from Currency to CurrencyDTO and vice versa
+ */
+
 @Slf4j
 @Service
 public class CurrencyMapper implements MappingService<Currency, CurrencyDTO>

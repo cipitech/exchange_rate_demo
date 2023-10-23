@@ -1,5 +1,8 @@
 package com.cipitech.tools.converters.exchange.utils;
 
+/**
+ * Global String variables
+ */
 public class Globals
 {
 	public static class Profiles

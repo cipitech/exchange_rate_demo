@@ -6,6 +6,10 @@ import com.cipitech.tools.converters.exchange.repository.CurrencyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Mapping service from ExchangeRate to ExchangeRateDTO and vice versa
+ */
+
 @Slf4j
 @Service
 public class ExchangeRateMapper implements MappingService<ExchangeRate, ExchangeRateDTO>
@@ -62,6 +66,8 @@ public class ExchangeRateMapper implements MappingService<ExchangeRate, Exchange
 		}
 
 		ExchangeRate rate = ExchangeRate.builder()
+				// We must look in the database in order to make the connection because the currencyDTO doear not have the ID field
+				// so hibernate will not set the foreign key and the currency column will be null
 				.fromCurrency(rateDTO.getFromCurrency() != null ? currencyRepository.findByCodeIgnoreCase(rateDTO.getFromCurrency().getCode()) : null)
 				.toCurrency(rateDTO.getToCurrency() != null ? currencyRepository.findByCodeIgnoreCase(rateDTO.getToCurrency().getCode()) : null)
 				.rate(rateDTO.getRate()).build();
