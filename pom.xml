@@ -42,7 +42,7 @@
         <maven.compiler.release>17</maven.compiler.release>
 
         <lombok.version>1.18.30</lombok.version>
-        <commons-lang.version>3.13.0</commons-lang.version>
+        <commons-lang.version>3.12.0</commons-lang.version>
         <spring-ui.version>2.2.0</spring-ui.version>
         <jsoup.version>1.16.2</jsoup.version>
     </properties>

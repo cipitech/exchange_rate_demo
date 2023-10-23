@@ -2,14 +2,14 @@
 
 ### Live Demo ###
 
-You can view a live demo of this repository here: http://185.217.127.232:8082/api/swagger-ui/index.html
+You can view a live demo of this repository here: http://rates.cipitech.com/api/swagger-ui/index.html
 
 ### What is this repository for? ###
 
 An API that provides functionality for exchange rates and currency conversions.
-It loads up-to-date exchange rate data from two types of datasources depending on the
+It loads up-to-date exchange rate data from two types of datasource depending on the
 spring-boot profile that you choose. You can only choose one profile at a time.
-If you add both profiles then by default the "third-party" will be activated.
+If you add both profiles then by default only the "third-party" will be activated.
 
 ### Profiles ###
 
@@ -23,7 +23,7 @@ register and obtain your API key. Then you must put your API key in the spring b
 
 When you use this profile then the currencies and the exchange rates are retrieved from .json
 files from the filesystem. Only two json files are included (EUR and USD) so if you want extra
-currencies you must create additional files.
+currencies you must create additional files. Make sure that you follow the syntax from the existing files.
 
 ### Configuration ###
 
@@ -36,7 +36,7 @@ The 3 properties that MUST be set before you run (because i have put dummy data 
 
 * **spring.profiles.active**  *#Choose either "third-party" OR "offline"*
 * **third-party.access-key** *#The API key that you obtained when you registered to https://exchangerate.host*
-* **offline.data-path** *#The absolute path of your workspace (the path where you cloned this repository)*
+* **offline.data-path** *#The absolute path of your workspace (the path where you cloned this repository) followed by "/docker/offline_data"*
 
 You can also change some other configuration properties if you want to customise your application or you can just leave
 the default values:
@@ -50,6 +50,9 @@ the default values:
 
 ### How do I get set up? ###
 
+First you need to clone the repository to your PC.
+Then you need to have Java 17+ installed and Apache Maven.
+
 There are three approaches:
 
 1. Intellij or Eclipse IDE: Open project as Maven project and start main class. A default Spring boot run configuration
@@ -61,7 +64,7 @@ There are three approaches:
 
        -Dspring.profiles.active=third-party
        -Dthird-party.access-key=<INSERT YOUR API KEY HERE>
-       -Doffline.data-path=<INSERT YOUR WORKSPACE ABSOLUTE PATH HERE>/docker/offline_data"
+       -Doffline.data-path=<INSERT YOUR WORKSPACE ABSOLUTE PATH HERE>/docker/offline_data
    Alternatively you can just edit the application-*.yml files and put your desired configuration.
 
 
@@ -92,3 +95,9 @@ There are three approaches:
 Written by Altin Cipi: haris.tsipis (at) gmail.com
 
 ### Working hours Logs ###
+* 18/10/2023: 5h [6pm-11pm]
+* 19/10/2023: 2h [6pm-8pm]
+* 20/10/2023: 2h [6pm-8pm]
+* 21/10/2023: 9h [1pm-10pm]
+* 22/10/2023: 5h [6pm-11pm]
+* 23/10/2023: 5h [6pm-11pm]
