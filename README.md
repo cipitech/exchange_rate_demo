@@ -53,7 +53,7 @@ the default values:
 First you need to clone the repository to your PC.
 Then you need to have Java 17+ installed and Apache Maven.
 
-There are three approaches:
+There are four approaches:
 
 1. Intellij or Eclipse IDE: Open project as Maven project and start main class. A default Spring boot run configuration
    must have already been created by the IDE, so you can select it and run it.
@@ -68,14 +68,20 @@ There are three approaches:
    Alternatively you can just edit the application-*.yml files and put your desired configuration.
 
 
-2. Use maven and then run the service
+2. Use maven to build and then run the jar executable
     * Run in project dir: $ mvn clean install
     * go to target dir and run: $ java -jar exchange-rate-converter-[version].jar
 
    **Note**: Again you either must edit the application-*yml files or add the VM option in the "java" command.
 
 
-3. Use Docker and docker-compose
+3. Use maven to run as a Spring Boot application
+    * Run in the project dir: 
+   
+   $ mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=third-party -Dthird-party.access-key=< INSERT YOUR API KEY HERE > -Doffline.data-path=< INSERT YOUR WORKSPACE ABSOLUTE PATH HERE >/docker/offline_data"
+
+
+4. Use Docker and docker-compose
     * Run in project dir: $ mvn clean install
     * Go to "target" dir and copy the jar file exchange-rate-converter-[version].jar into the "docker" folder.
     * Go to a linux system (or windows) where you have installed docker and docker-compose.
