@@ -69,16 +69,16 @@ There are four approaches:
 
 
 2. Use maven to build and then run the jar executable
-    * Run in project dir: $ mvn clean install
-    * go to target dir and run: $ java -jar exchange-rate-converter-[version].jar
-
-   **Note**: Again you either must edit the application-*yml files or add the VM option in the "java" command.
+    * Run in project root dir (where pom.xml is located): $ mvn clean install
+    * go to "/target" dir and run: 
+   
+   $ java -jar "-Dspring.profiles.active=third-party -Dthird-party.access-key=< INSERT YOUR API KEY HERE > -Doffline.data-path=< INSERT YOUR WORKSPACE ABSOLUTE PATH HERE >/docker/offline_data" exchange-rate-converter-[version].jar
 
 
 3. Use maven to run as a Spring Boot application
-    * Run in the project dir: 
+    * Run in the project root dir: 
    
-   $ mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=third-party -Dthird-party.access-key=< INSERT YOUR API KEY HERE > -Doffline.data-path=< INSERT YOUR WORKSPACE ABSOLUTE PATH HERE >/docker/offline_data"
+   $ mvn spring-boot:run "-Dspring-boot.run.jvmArguments=-Dspring.profiles.active=third-party -Dthird-party.access-key=< INSERT YOUR API KEY HERE > -Doffline.data-path=< INSERT YOUR WORKSPACE ABSOLUTE PATH HERE >/docker/offline_data"
 
 
 4. Use Docker and docker-compose
