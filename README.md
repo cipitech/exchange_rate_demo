@@ -51,7 +51,7 @@ the default values:
 ### How do I get set up? ###
 
 First you need to clone the repository to your PC.
-Then you need to have Java 17+ installed and Apache Maven.
+Then you need to have Java 17+ installed and Apache Maven. Finally if you choose options 1, 2 and 3 from below, you need to have Postgresql installed (preferably running on port 5434) and a database named "exchange_rate" already created (if you choose your own port and database name make sure to put your changes in the application.yml file).
 
 There are four approaches:
 
